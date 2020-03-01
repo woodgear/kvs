@@ -1,6 +1,8 @@
 use structopt;
 use structopt::StructOpt;
 
+use kvs::{KvStore, Result};
+
 #[derive(Debug, StructOpt)]
 #[structopt(name = "kvs", about = "an simple in memory kv db")]
 struct Opt {
@@ -15,7 +17,7 @@ enum SubCmd {
     Rm { key: String },
 }
 
-fn main() {
+fn main() -> Result<()> {
     let opt = Opt::from_args();
     match opt.subcmd {
         SubCmd::Get { .. } => {
@@ -28,4 +30,5 @@ fn main() {
             panic!("unimplemented");
         }
     }
+    Ok(())
 }
