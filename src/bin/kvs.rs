@@ -19,16 +19,26 @@ enum SubCmd {
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
+    let mut store = KvStore::open(std::env::current_dir()?)?;
     match opt.subcmd {
-        SubCmd::Get { .. } => {
-            panic!("unimplemented");
+        SubCmd::Get { key } => match store.get(key)? {
+            Some(v) => {
+                println!("{}", v);
+            }
+            None => {
+                println!("Key not found");
+            }
+        },
+        SubCmd::Set { key, val } => {
+            store.set(key, val)?;
         }
-        SubCmd::Set { .. } => {
-            panic!("unimplemented");
-        }
-        SubCmd::Rm { .. } => {
-            panic!("unimplemented");
-        }
-    }
+        SubCmd::Rm { key } => match store.remove(key) {
+            Ok(_) => {}
+            Err(e) => {
+                println!("Key not found");
+                std::process::exit(-1);
+            }
+        },
+    };
     Ok(())
 }
